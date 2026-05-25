@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Local AI Chat</title>
+    <script>
+        // Defines an async function that sends a message to the local AI model.
+        async function sendMessage() {
+            // Gets the input element for the user's message and the div to display the AI's response.
+            const messageInput = document.getElementById("message");
+            // Gets the div to display the AI's response.
+            const responseDiv = document.getElementById("response");
+
+            // Gets the value of the user's message.
+            const message = messageInput.value;
+            // Updates the response div to display a waiting message.
+            responseDiv.innerHTML = "Waiting for response..";
+
+            try {
+                // Uses the Fetch API to send a POST request to the /chat endpoint.
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // Sends the user's message as a JSON payload in the request body.
+                    body: JSON.stringify({ message: message })
+                });
+
+                //
+                // Parses the JSON response from the server.
+                const data = await res.json();
+                if (data.error) {
+                    responseDiv.innerText = "Error: " + data.error;
+                } else {
+                    responseDiv.innerText = data.response;
+                }
+            } catch (error) {
+                responseDiv.innerText = "Error: " + error;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Chat with Local AI Model</h1>
+    <textarea id="message" rows="4" cols="50" placeholder="Enter your message here.."></textarea><br>
+
+    <button onclick="sendMessage()">Send</button>
+    <h2>Response:</h2>
+    <div id="response"></div>
+</body>
+
+</html>
